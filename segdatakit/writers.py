@@ -100,14 +100,14 @@ class ZarrWriter(BaseWriter):
         H, W = first["image"].shape[:2]
 
         self._store = zarr.open(str(self.out_path), mode="w")
-        self._images = self._store.zeros(
+        self._images = self._store.require_array(
             "images",
             shape=(n, H, W, 3),
             chunks=(1, H, W, 3),
             dtype=np.uint8,
             compressor=compressor,
         )
-        self._masks = self._store.zeros(
+        self._masks = self._store.require_array(
             "masks",
             shape=(n, H, W),
             chunks=(1, H, W),
@@ -117,9 +117,8 @@ class ZarrWriter(BaseWriter):
         self._paths = self._store.empty(
             "meta/img_paths",
             shape=(n,),
-            dtype=object,
-            object_codec=numcodecs.VLenUTF8(),
-            compressor=None,
+            dtype=U256,
+            
         )
 
         # write split index as attribute
@@ -137,11 +136,13 @@ class ZarrWriter(BaseWriter):
             split = sample["meta"].get("split", "unknown")
             split_index.setdefault(split, []).append(idx)
 
-        self._store.attrs["split_index"]  = split_index
-        self._store.attrs["num_classes"]  = self.cfg["dataset"]["num_classes"]
-        self._store.attrs["ignore_index"] = self.cfg["dataset"].get("ignore_index", 255)
-        self._store.attrs["dataset"]      = self.cfg["dataset"]["name"]
 
+        self._store.attrs.update({
+            "split_index":  split_index,
+            "num_classes":  self.cfg["dataset"]["num_classes"],
+            "ignore_index": self.cfg["dataset"].get("ignore_index", 255),
+            "dataset":      self.cfg["dataset"]["name"],
+            })
         print(f"Written {n} samples → {self.out_path}  "
               f"({self._human_size(self.out_path)})")
 
