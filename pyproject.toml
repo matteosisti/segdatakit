@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "segdatakit"
+version = "0.1.0"
+description = "Lossless preprocessing and efficient storage for semantic segmentation datasets"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+
+dependencies = [
+    "numpy>=1.24",
+    "Pillow>=10.0",
+    "zarr>=2.16",
+    "numcodecs>=0.12",
+    "webdataset>=0.2.86",
+    "torch>=2.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "ruff",
+]
+dali = [
+    "nvidia-dali-cuda120",
+]
+
+[project.scripts]
+segdatakit-convert  = "scripts.convert:main"
+segdatakit-validate = "scripts.validate:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["segdatakit*", "scripts*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

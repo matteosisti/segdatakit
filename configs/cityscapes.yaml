@@ -1,0 +1,81 @@
+dataset:
+  name: cityscapes
+  num_classes: 19
+  ignore_index: 255
+  splits:
+    - train   # 2975 images
+    - val     # 500 images
+
+  # remapping from raw labelIds (0-33) to trainIds (0-18, 255=ignore)
+  # source: https://github.com/mcordts/cityscapesScripts
+  label_map:
+    0:   255  # unlabeled
+    1:   255  # ego vehicle
+    2:   255  # rectification border
+    3:   255  # out of roi
+    4:   255  # static
+    5:   255  # dynamic
+    6:   255  # ground
+    7:   0    # road
+    8:   1    # sidewalk
+    9:   255  # parking
+    10:  255  # rail track
+    11:  2    # building
+    12:  3    # wall
+    13:  4    # fence
+    14:  255  # guard rail
+    15:  255  # bridge
+    16:  255  # tunnel
+    17:  5    # pole
+    18:  255  # polegroup
+    19:  6    # traffic light
+    20:  7    # traffic sign
+    21:  8    # vegetation
+    22:  9    # terrain
+    23:  10   # sky
+    24:  11   # person
+    25:  12   # rider
+    26:  13   # car
+    27:  14   # truck
+    28:  15   # bus
+    29:  255  # caravan
+    30:  255  # trailer
+    31:  16   # train
+    32:  17   # motorcycle
+    33:  18   # bicycle
+
+  class_names:
+    - road
+    - sidewalk
+    - building
+    - wall
+    - fence
+    - pole
+    - traffic light
+    - traffic sign
+    - vegetation
+    - terrain
+    - sky
+    - person
+    - rider
+    - car
+    - truck
+    - bus
+    - train
+    - motorcycle
+    - bicycle
+
+storage:
+  format: zarr          # zarr | webdataset | npy
+  compression: lz4      # lz4 | zstd | none  — all lossless
+  chunk_size: 1         # images per Zarr chunk (1 = one image at a time, best for random access)
+
+paths:
+  raw: /data/cityscapes           # root with leftImg8bit/ and gtFine/
+  output: /data/cityscapes.zarr
+
+validation:
+  n_audit_samples: 100
+  audit_seed: 42
+  min_valid_pixel_fraction: 0.30  # fraction of non-ignore pixels expected
+  max_aspect_ratio_distortion: 0.05
