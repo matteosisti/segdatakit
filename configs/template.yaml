@@ -1,0 +1,45 @@
+# configs/template.yaml
+#
+# Starting point for adding a new dataset to segdatakit.
+# Steps:
+#   1. Copy this file and rename it (e.g. configs/ade20k.yaml)
+#   2. Fill in all fields marked with TODO
+#   3. Implement a Reader subclass in segdatakit/readers.py
+#   4. Register it in get_reader()
+#   5. Run: python scripts/validate.py --cfg configs/ade20k.yaml --sanity-only
+
+dataset:
+  name: TODO          # lowercase, must match the key in get_reader()
+  num_classes: TODO   # number of valid semantic classes (excluding ignore)
+  ignore_index: 255   # pixel value meaning "ignore this pixel during eval"
+  splits:
+    - train
+    - val
+
+  # label_map remaps raw label ids from the dataset's annotation format
+  # to contiguous 0-indexed train ids.
+  # Format: raw_id: train_id
+  # Ids not listed here default to ignore_index.
+  label_map:
+    0: 0    # TODO: fill in your remapping
+    1: 1
+    # ...
+
+  class_names:    # optional, used for visualisation and logging
+    - TODO        # class 0
+    - TODO        # class 1
+
+storage:
+  format: zarr          # zarr | webdataset | npy
+  compression: lz4      # lz4 | zstd | none
+  chunk_size: 1
+
+paths:
+  raw: /data/TODO         # root directory of the raw dataset
+  output: /data/TODO.zarr # where to write the converted store
+
+validation:
+  n_audit_samples: 100
+  audit_seed: 42
+  min_valid_pixel_fraction: 0.30
+  max_aspect_ratio_distortion: 0.05

@@ -1,0 +1,168 @@
+dataset:
+  name: coco
+  num_classes: 133
+  ignore_index: 255
+  splits:
+    - train   # 118287 images
+    - val     # 5000 images
+
+  # COCO panoptic uses 1-indexed, non-contiguous category ids.
+  # This map remaps to 0-indexed contiguous train ids (0..132).
+  # Generated from the official COCO panoptic category list.
+  # Things: 80 categories (1-90, non-contiguous)
+  # Stuff:  53 categories (92-200, non-contiguous)
+  label_map:
+    1:   0    # person
+    2:   1    # bicycle
+    3:   2    # car
+    4:   3    # motorcycle
+    5:   4    # airplane
+    6:   5    # bus
+    7:   6    # train
+    8:   7    # truck
+    9:   8    # boat
+    10:  9    # traffic light
+    11:  10   # fire hydrant
+    13:  11   # stop sign
+    14:  12   # parking meter
+    15:  13   # bench
+    16:  14   # bird
+    17:  15   # cat
+    18:  16   # dog
+    19:  17   # horse
+    20:  18   # sheep
+    21:  19   # cow
+    22:  20   # elephant
+    23:  21   # bear
+    24:  22   # zebra
+    25:  23   # giraffe
+    27:  24   # backpack
+    28:  25   # umbrella
+    31:  26   # handbag
+    32:  27   # tie
+    33:  28   # suitcase
+    34:  29   # frisbee
+    35:  30   # skis
+    36:  31   # snowboard
+    37:  32   # sports ball
+    38:  33   # kite
+    39:  34   # baseball bat
+    40:  35   # baseball glove
+    41:  36   # skateboard
+    42:  37   # surfboard
+    43:  38   # tennis racket
+    44:  39   # bottle
+    46:  40   # wine glass
+    47:  41   # cup
+    48:  42   # fork
+    49:  43   # knife
+    50:  44   # spoon
+    51:  45   # bowl
+    52:  46   # banana
+    53:  47   # apple
+    54:  48   # sandwich
+    55:  49   # orange
+    56:  50   # broccoli
+    57:  51   # carrot
+    58:  52   # hot dog
+    59:  53   # pizza
+    60:  54   # donut
+    61:  55   # cake
+    62:  56   # chair
+    63:  57   # couch
+    64:  58   # potted plant
+    65:  59   # bed
+    67:  60   # dining table
+    70:  61   # toilet
+    72:  62   # tv
+    73:  63   # laptop
+    74:  64   # mouse
+    75:  65   # remote
+    76:  66   # keyboard
+    77:  67   # cell phone
+    78:  68   # microwave
+    79:  69   # oven
+    80:  70   # toaster
+    81:  71   # sink
+    82:  72   # refrigerator
+    84:  73   # book
+    85:  74   # clock
+    86:  75   # vase
+    87:  76   # scissors
+    88:  77   # teddy bear
+    89:  78   # hair drier
+    90:  79   # toothbrush
+    92:  80   # banner
+    93:  81   # blanket
+    94:  82   # branch
+    95:  83   # bridge
+    96:  84   # building-other
+    97:  85   # bush
+    98:  86   # cabinet
+    99:  87   # cage
+    100: 88   # cardboard
+    101: 89   # carpet
+    102: 90   # ceiling-other
+    103: 91   # ceiling-tile
+    104: 92   # cloth
+    105: 93   # clothes
+    106: 94   # clouds
+    107: 95   # counter
+    108: 96   # cupboard
+    109: 97   # curtain
+    110: 98   # desk-stuff
+    111: 99   # dirt
+    112: 100  # door-stuff
+    113: 101  # fence
+    114: 102  # floor-marble
+    115: 103  # floor-other
+    116: 104  # floor-stone
+    117: 105  # floor-tile
+    118: 106  # floor-wood
+    119: 107  # flower
+    120: 108  # fog
+    121: 109  # food-other
+    122: 110  # fruit
+    123: 111  # furniture-other
+    124: 112  # grass
+    125: 113  # gravel
+    126: 114  # ground-other
+    127: 115  # hill
+    128: 116  # house
+    129: 117  # leaves
+    130: 118  # light
+    131: 119  # mat
+    132: 120  # mirror-stuff
+    133: 121  # moss
+    134: 122  # mountain
+    135: 123  # mud
+    136: 124  # napkin
+    137: 125  # net
+    138: 126  # paper
+    139: 127  # pavement
+    140: 128  # pillow
+    141: 129  # plant-other
+    142: 130  # plastic
+    143: 131  # platform
+    144: 132  # playingfield
+    145: 255  # railing → ignore (often ambiguous boundary)
+    146: 255  # railroad → ignore
+    147: 255  # river → ignore
+    148: 255  # road → ignore (not in panoptic stuff for COCO)
+    149: 255  # rock → ignore
+    150: 255  # roof → ignore
+
+storage:
+  format: zarr
+  compression: lz4
+  chunk_size: 1
+
+paths:
+  raw: /data/coco
+  output: /data/coco.zarr
+
+validation:
+  n_audit_samples: 100
+  audit_seed: 42
+  min_valid_pixel_fraction: 0.20   # COCO has more crowd/ignore regions
+  max_aspect_ratio_distortion: 0.05
