@@ -82,13 +82,13 @@ class ZarrWriter(BaseWriter):
 
     def write(self, reader: "BaseReader") -> None:
         import zarr
-        import numcodecs
+        from zarr.codecs import BloscCodec
 
         codec_name = self.cfg.get("storage", {}).get("compression", "lz4")
-        compressor = numcodecs.Blosc(
+        compressor = BloscCodec(
             cname=codec_name,
             clevel=3,
-            shuffle=numcodecs.Blosc.BITSHUFFLE,
+            shuffle="bitshuffle",
         )
 
         n = len(reader)
@@ -105,21 +105,16 @@ class ZarrWriter(BaseWriter):
             shape=(n, H, W, 3),
             chunks=(1, H, W, 3),
             dtype=np.uint8,
-            compressor=compressor,
+            compressors=[compressor], 
         )
         self._masks = self._store.require_array(
             "masks",
             shape=(n, H, W),
             chunks=(1, H, W),
             dtype=np.uint8,
-            compressor=compressor,
+            compressors=[compressor], 
         )
-        self._paths = self._store.empty(
-            "meta/img_paths",
-            shape=(n,),
-            dtype=U256,
-            
-        )
+        
 
         # write split index as attribute
         split_index: dict[str, list[int]] = {}
@@ -131,7 +126,6 @@ class ZarrWriter(BaseWriter):
 
             self._images[idx] = sample["image"]
             self._masks[idx]  = sample["mask"]
-            self._paths[idx]  = sample["meta"].get("img_path", "")
 
             split = sample["meta"].get("split", "unknown")
             split_index.setdefault(split, []).append(idx)

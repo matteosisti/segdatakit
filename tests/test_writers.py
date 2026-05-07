@@ -120,7 +120,7 @@ def test_zarr_writer_context_manager(tmp_path):
         writer.write(reader)
     import zarr
     store = zarr.open(str(out), mode="r")
-    assert len(store["images"]) == 2
+    assert store["images"].shape[0] == 2
 
 
 # ---------------------------------------------------------------------------
