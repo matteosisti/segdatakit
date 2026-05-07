@@ -115,11 +115,13 @@ def test_pixel_diff_identical():
 def test_pixel_diff_single_error():
     a = make_image(seed=5)
     b = a.copy()
-    b[10, 20, 1] = (int(b[10, 20, 1]) + 100) % 256
-    result = pixel_diff(a, b)
+    b[10, 20, 1] = 0
+    a_copy = a.copy()
+    a_copy[10, 20, 1] = 100
+    result = pixel_diff(a_copy, b)
     assert result.is_lossless is False
     assert result.num_different_pixels == 1
-    assert result.max_abs_error <= 100
+    assert result.max_abs_error == 100
 
 
 def test_pixel_diff_no_uint8_wraparound():

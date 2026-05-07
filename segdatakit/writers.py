@@ -85,10 +85,10 @@ class ZarrWriter(BaseWriter):
         import numcodecs
 
         codec_name = self.cfg.get("storage", {}).get("compression", "lz4")
-        compressor = numcodecs.Blosc2(
+        compressor = numcodecs.Blosc(
             cname=codec_name,
             clevel=3,
-            shuffle=numcodecs.Blosc2.BITSHUFFLE,
+            shuffle=numcodecs.Blosc.BITSHUFFLE,
         )
 
         n = len(reader)
