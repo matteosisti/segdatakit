@@ -105,10 +105,40 @@ class CityscapesReader(BaseReader):
     def __init__(self, cfg: dict, split: str):
         super().__init__(cfg, split)
         raw_root = Path(cfg["paths"]["raw"])
-        self._img_root  = raw_root / "leftImg8bit"
-        self._mask_root = raw_root / "gtFine"
+        self._img_root  = self._find_subdir(raw_root, "leftImg8bit")
+        self._mask_root = self._find_subdir(raw_root, "gtFine")
         self._label_map = self._build_label_map(cfg)
         self._img_paths, self._mask_paths = self._collect_paths(split)
+
+    @staticmethod
+    def _find_subdir(root: Path, name: str) -> Path:
+        """
+        Locate a named subdirectory anywhere within root, up to 3 levels deep.
+
+        Handles all common Cityscapes extraction layouts:
+          root/leftImg8bit/                          (flat extraction)
+          root/leftImg8bit_trainvaltest/leftImg8bit/ (official zip layout)
+          root/data/leftImg8bit/                     (custom wrapping)
+        """
+        # direct child — fastest common case
+        direct = root / name
+        if direct.exists():
+            return direct
+
+        # search up to 3 levels deep
+        for depth in range(1, 4):
+            pattern = "/".join(["*"] * depth) + f"/{name}"
+            matches = sorted(root.glob(pattern))
+            if matches:
+                found = matches[0]
+                print(f"[segdatakit] Found '{name}' at: {found}")
+                return found
+
+        raise FileNotFoundError(
+            f"Could not find '{name}/' directory under {root}.\n"
+            f"Searched up to 3 levels deep.\n"
+            f"Contents of root: {list(root.iterdir()) if root.exists() else 'root does not exist'}"
+        )
 
     # ------------------------------------------------------------------
     # Path collection
